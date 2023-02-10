@@ -1,0 +1,142 @@
+(
+  - Get a detailed explanantion of what compile time and run time is.
+)
+Rebinding doesn’t mutate the existing memory location. It reserves new memory and reassigns the symbolic name to the new location.
+
+monthly_salary = 10_000
+
+### Rebinds the variable
+monthly_salary = 11_000
+
+(
+  - Read about garbage collection.
+)
+
+Placing character ! at the end of the name indicates a function that may raise a runtime error.
+(
+  - Check online examples
+)
+
+
+## Module attributes
+  - They can be used as compile-time constants, that is they exists only during the compilation of the module.
+
+  Some module attributes can be registered. This means they will be stored in the generated binary and can be accessed at runtime, e.g @moduledoc and @doc.
+
+  (
+    - check [ex_doc](https://github.com/elixir-lang/ex_doc) --- it is used to generate HTML documentation.
+  )
+
+## Type Specifications
+Use this to provide the type information for a function. This information can be analyzed with a tool called [dialyzer](http://erlang.org/doc/man/dialyzer.html)
+  (
+    - [typespecs](https://elixir-lang.org/getting-started/typespecs-and-behaviours.html)
+  )
+
+## Atoms
+  variable = :some_atom
+
+  An atom consists of two parts: the text and the value. The atom text is whatever you put after the colon character.
+  At runtime, this text is kept in the atom table. The value is the data that goes into the variable, and it’s merely a reference to the atom table.
+
+  This is why atoms are best used for named constants, because they are only a reference to the atom table. They are efficeint both memory and performance-wise.
+
+  (
+    - Read ATOM ALIASES
+  )
+
+## Tuples
+  person = {"Blessing", 12, "male", "tall", "skinny"}
+
+  - use elem/2 to extract an element from a tuple -- elem(tuple, zero_based_index).
+    e.g elem(person, 2) returns "male"
+  - use put_elem/3 to modify an element -- put_elem(tuple, zero_based_index, new_value)
+    e.g put_elem(person, 1, 24)
+
+## Lists
+   Lists are never a good fit when direct access is called for because most of the operations on lists have an O(n) complexity. 
+   Avoid adding element to the end of a list because it will have to go through all the elements in the list which is expensive.
+
+   Lists are recursive structures of (head, tail pairs)
+
+   (
+    - Revisit Lists and immutability
+   )
+
+## Maps
+  person = %{
+    :name => "Blessing",
+    :age => 10,
+    :school => "RHS"
+  }
+  - use Map.fetch to know if a key is present/not. 
+  iex> Map.fetch(person, :name) -- {:ok, "Blessing}
+  iex> Map.fetch(person, :alive) -- :error
+
+## Binaries and bitstrings
+  (
+    - What are Binaries and bitstrings
+    - Different ways to create them
+    - How to use them
+    - Why to use them
+  )
+
+
+## Strings
+  - String with double quote is binary while single quote is represneted as list
+  iex> "Me" --- "Me"
+  iex> 'ABC' --- 'ABC'
+  iex> [65, 66, 67] --- 'ABC'
+
+  - String.to_charlist/1 converts binary string to list string
+  iex> String.to_charlist("ABC") --- 'ABC'
+
+
+## First-class functions
+  - square = fn x ->
+                x * x
+              end
+  iex> square.(3) --- 9
+  # The above is called an anonymous/lambda function
+  # THE GENERAL CONVENTION IS NOT TO ENCLOSE THE ARGUMENTS WITH PARENTHESES.
+
+  - Use the capture operator to write a more compact lambda function.
+  - square = fn x ->
+                x * x
+              end
+    can be writtern as:
+      square = &(&1 * &1)
+
+  - detail = fn x, y, z ->
+                x + y * z
+              end
+    can be written as:
+      detail = &(&1 + &2 * &3)
+
+
+## Closures
+  (
+    - search for closures usage in real life
+  )
+
+
+## Higher-level types
+
+  - Range: Internally, is represented as a map that contains range boundaries.
+  iex> 1..10
+
+  - Keyboard list: is a list where each element is a two-element tuple and the first element of each tuple is an atom.
+  iex> [{:Blessing, 3}, {:Love, 3}, {:Peace, 2}]
+    - The above can also be written as:
+    iex> [Blessing: 3, Love: 3, Peace: 2]
+    - Keyword lists are often used for small-size key/value structures, where keys are atoms.
+    - Accept a keyword list as the last argument of a function, and make that argument default to an empty list. THIS IS THE STANDARD PRACTICE
+    iex> def my_fun(arg1, arg2, opts \\ []) do
+       > ...
+       > end
+
+  - MapSet is used to store unique values.
+    iex> days = MapSet.new([:monday, :tuesday, :wednesday, :tuesday]) --- [:monday, :tuesday, :wednesday]
+      - MapSet doesn't preserve ordering
+
+  - Date, Time, DateTime, and NaiveDateTime
