@@ -1,0 +1,64 @@
+# Control flow
+
+- Use tuples to group related data
+  iex> person = {:Blessing, 22, "M"}
+
+- use the pin operator when trying to match against the contents of a variable
+  iex> name = :blessing
+  iex> {name, _age} = {:peace, 25}
+        In the above, we are matching and bounding at the same time.
+        name is :peace at this point 
+  iex> {^name, _age} = {:peace, 125} --- this will run successfully
+  iex> {^name, _age} = {:love, 125}
+  ** (MatchError) no match of right hand side value: {:love, 125}
+  + the above means that we are expecting the value of `name` to be :`peace` and it should be in the right position.
+
+### READ ABOUT BINARIES --- page 69
+
+ - use multiclause function instead of ifs when necessary
+
+## Classical branching constructs
+
+  - cond: provide a default value for cond which will always execute
+  iex> cond do
+     > a >= b -> a
+     > b >= c -> b
+     > true -> c
+     > end
+
+  - case: accepts a list of pattern that should match an expression
+  iex> case some_expression do
+     >  {:ok, result} -> 
+     >    # do something
+     >  {:error, message} ->
+     >    # do something else
+     > end
+
+  - with: is useful as a substitute for nested case. `with` helps to use pattern match to chain multiple expressions, verify the result of each expressions and returns a value. It also returns immdiately it meets the first unexpected result.
+  iex> with pattern_1 <- expression_1,
+     >      pattern_2 <- expression_2,
+     >      .............
+     >      .............
+     > do
+     > ......................
+     > ......................
+     > ......................
+     > end
+  ## Check chapter_3/with.ex for example
+  (
+    - [More on with](https://hexdocs.pm/elixir/Kernel.SpecialForms.html#with/1)
+  )
+
+## Loops and iterations
+  # Recursion
+    - Tail-call optimization happens in Elixir recursion. When a_func calls another_func, elixir doesn't do stack push. Instead, Elixir elixir jump to the beginning of another_func without doing additional memory allocation. This is called **tail-call optimization** and it happens when the last thing a_func does is to call another_func
+
+    - Note: 
+    def fun(...) do
+      1 + another_func(..) # this is not a tail call because after another_func finishes,
+                           # you have to increment its result by 1 to compute the final result of fun.
+    end
+
+  # Streams
+    - Streams are useful for lazy composable operations over anything enumerable. That is, they don't produce their result immdiately but they provide the structure of what the result should look like.
+    - the stream_result has to be passed to Enum to get the final_result
