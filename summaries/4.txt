@@ -1,0 +1,11 @@
+# Data Abstractions
+  - A module is in charge of abstracting some data, e.g List, String
+  - The module's function usually expect an instance of the data abstraction as the first argument, e.g
+    - The first argument to any String function is a string type -- "my_string"
+    - The first argument to any List function is a list type -- [1, 4]
+  - Modifier functions return a modified version of the abstraction, e.g
+    - String.upcase/1 returns a string
+    - List.insert_at/3 returns a list
+  - Query functions return some other type of data, e.g
+    - String
+    - List.contains?(my_list) returns boolean
