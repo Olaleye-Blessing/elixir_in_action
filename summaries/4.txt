@@ -9,3 +9,12 @@
   - Query functions return some other type of data, e.g
     - String
     - List.contains?(my_list) returns boolean
+
+## Abstracting with struct
+ - Each module can define only a struct.
+ - Use struct over map since struct can be used to create and pattern-match instances. Pattern matching struct gives us the assurance that we are only working with a certain struct.
+ - Some things that can be done with maps don't work with struct, even though they look similar. For example, the Enum function can't be used on struct. For example, this will throw an error:
+ iex> Enum.list(my_struct)
+ - A struct pattern can't match a plain map but a plain map pattern match a struct. This is is because Struct contains a :__struct__ key that is not available in maps. For example:
+ iex> my_struct = %{a: 1, b: 2} will throw an error
+ iex> %{a: a, b: b} = my_struct will pass
