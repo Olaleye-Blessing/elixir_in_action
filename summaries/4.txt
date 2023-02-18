@@ -18,3 +18,12 @@
  - A struct pattern can't match a plain map but a plain map pattern match a struct. This is is because Struct contains a :__struct__ key that is not available in maps. For example:
  iex> my_struct = %{a: 1, b: 2} will throw an error
  iex> %{a: a, b: b} = my_struct will pass
+
+## Immutable hierarchical updates
+  - Try to divide the operation into smaller functions when working with large data.
+
+## Helpers
+  - get_in/2 can be used to get the value of a nested data like so:
+  iex> user = %{names: %{others: ["Pk", "Bless"]}}
+  iex> get_in(user.names.others, 1)
+  - put_in/2, update_in/2 and get_and_update_in/2 works in a similar way
