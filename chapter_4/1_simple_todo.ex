@@ -6,7 +6,7 @@ defmodule TodoList do
           title: String.t()
         }
 
-  @type t :: %__MODULE__{auto_id: number(), entries: entry()}
+  @type t :: %__MODULE__{auto_id: integer(), entries: entry()}
 
   defstruct auto_id: 1, entries: %{}
 
@@ -39,5 +39,28 @@ defmodule TodoList do
     todo_list.entries
     |> Stream.filter(fn {_, entry} -> entry.date == date end)
     |> Enum.map(fn {_, entry} -> entry end)
+  end
+
+  @spec update_entry(t, entry) :: t
+  def update_entry(todo_list, %{} = new_entry) do
+    update_entry(todo_list, new_entry.id, fn _ -> new_entry end)
+  end
+
+  @spec update_entry(t, integer(), (t -> t)) :: t
+  def update_entry(todo_list, entry_id, updater_func) do
+    case Map.fetch(todo_list.entries, entry_id) do
+      :error ->
+        todo_list
+
+      {_, old_entry} ->
+        # ensure that the updater_func
+        # 1. hasn't changed the entry id
+        # 2. the data type still remains the same
+
+        new_entry = %{id: ^entry_id} = updater_func.(old_entry)
+        new_entries = Map.put(todo_list.entries, new_entry.id, new_entry)
+
+        %TodoList{todo_list | entries: new_entries}
+    end
   end
 end
