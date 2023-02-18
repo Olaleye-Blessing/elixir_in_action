@@ -10,11 +10,18 @@ defmodule TodoList do
 
   defstruct auto_id: 1, entries: %{}
 
-  @spec new() :: t
+  @spec new([entry]) :: t
   @doc """
   Instantaites a new %TodoList.
   """
-  def new(), do: %TodoList{}
+
+  def new(entries \\ []),
+    do:
+      Enum.reduce(
+        entries,
+        %TodoList{},
+        &add_entry(&2, &1)
+      )
 
   @spec add_entry(t, entry) :: t
   @doc """
