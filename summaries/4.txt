@@ -27,3 +27,11 @@
   iex> user = %{names: %{others: ["Pk", "Bless"]}}
   iex> get_in(user.names.others, 1)
   - put_in/2, update_in/2 and get_and_update_in/2 works in a similar way
+
+## Protocol
+  - A protocol is a module that declares a set of functions without implementing them. You define them as:
+  defprotocol MyProtocol do
+    def my_function(arg)
+  end
+  - 
+(Read protocols again)
