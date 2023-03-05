@@ -8,3 +8,11 @@ In Beam, the unit of concurrency is a process.
 
 - Process helps to run things in parallel(scalability)
 - Process ensures isolation(faulty tolerance)
+
+## Creating a process
+
+Use spawn/1 to create a process. spawn/1 takes a zero-arity lambda function that will run in the new process. spawn/1 is immediately returned after the process is created.
+
+spawn/1 returns a pid, which is the process identifier. pid can be used to communicate with the process.
+
+The provided lambda is executed in the new process and therefore runs concurrently. After the lambda is done, the spawned process exits, and its memory is released.
