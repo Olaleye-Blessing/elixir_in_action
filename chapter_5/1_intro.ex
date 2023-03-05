@@ -22,11 +22,25 @@ defmodule Intro do
   # `1` will print :ok because Enum.each doesn't care about the return value
   # `2` will print a list of pids
   def async(query) do
-    # starts a process with spawn/1
+    caller = self()
+
     spawn(fn ->
-      query
-      |> slow()
-      |> IO.puts()
+      send(caller, {:query_result, slow(query)})
+
+      # using the below won't work because the spawned process will send message to itself because self() will return the pid of the invoked function
+      # send(self(), {:query_result, slow(query)})
     end)
+  end
+
+  def get_result() do
+    receive do
+      {:query_result, result} -> result
+    end
+  end
+
+  def send_and_receive(range \\ 1..5) do
+    range
+    |> Enum.map(&async("query #{&1}"))
+    |> Enum.map(fn _ -> get_result() end)
   end
 end

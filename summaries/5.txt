@@ -1,5 +1,6 @@
 # Concurrency Primitives
 
+
 ## Concurrency in BEAM
 
 In Beam, the unit of concurrency is a process.
@@ -9,6 +10,7 @@ In Beam, the unit of concurrency is a process.
 - Process helps to run things in parallel(scalability)
 - Process ensures isolation(faulty tolerance)
 
+
 ## Creating a process
 
 Use spawn/1 to create a process. spawn/1 takes a zero-arity lambda function that will run in the new process. spawn/1 is immediately returned after the process is created.
@@ -16,3 +18,45 @@ Use spawn/1 to create a process. spawn/1 takes a zero-arity lambda function that
 spawn/1 returns a pid, which is the process identifier. pid can be used to communicate with the process.
 
 The provided lambda is executed in the new process and therefore runs concurrently. After the lambda is done, the spawned process exits, and its memory is released.
+
+
+## Message passing
+Messages can be passed from one process(caller) to another(receiver) using send/2. Sending a message amounts to storing it in the receiver's mailbox. The 
+receiver consumes messages in the order received, and a message can be removed 
+from the queue only if it’s consumed.
+
+iex> send(pid, message)
+
+message can be any data type, including a tuple.
+
+The receiver can match on the message using receive/0 and execute the corresponding body. If the message does not match, the process will wait for another message.
+
+iex> receive do
+...> pattern_1 -> body_1
+...> pattern_2 -> body_2
+...> pattern_3 -> body_3
+...> end
+
+receive/0 is a blocking call. after/1 can be used to specify a timeout which is executed if no message is received within the timeout.
+
+iex> receive do
+...>  pattern_1 -> body_1
+...>  pattern_2 -> body_2
+...>  pattern_3 -> body_3
+...> after
+...>  5_000 -> IO.puts("No message received within 5 seconds")
+...> end
+
+
+### Receive/0 algorithm
+Unlike case/1, receive/0 doesn't raise an error if no pattern matches. Instead, it waits for a message to arrive and tries to match it against the patterns. If no pattern matches, it waits for another message. This process continues until a pattern matches or the timeout is reached (if specified).
+
+In short, it looks like this:
+- Take the first message from the mailbox.
+- Try to match it against any of the provided patterns, going from top to bottom.
+- If a pattern matches the message, run the corresponding code.
+- If no pattern matches, put the message back into the mailbox at the same position it originally occupied. Then try the next message.
+- If there are no more messages in the queue, wait for a new one to arrive. When a new message arrives, start from step 1, inspecting the first message in the mailbox.
+- If the after clause is specified and no message is matched in the given amount of time, run the code from the after block.
+
+The result of receive is the result of the last expression in the matched clause.
