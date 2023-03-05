@@ -11,7 +11,9 @@ In Beam, the unit of concurrency is a process.
 - Process ensures isolation(faulty tolerance)
 
 
-## Creating a process
+## Working with processes
+
+### Creating a process
 
 Use spawn/1 to create a process. spawn/1 takes a zero-arity lambda function that will run in the new process. spawn/1 is immediately returned after the process is created.
 
@@ -20,7 +22,8 @@ spawn/1 returns a pid, which is the process identifier. pid can be used to commu
 The provided lambda is executed in the new process and therefore runs concurrently. After the lambda is done, the spawned process exits, and its memory is released.
 
 
-## Message passing
+### Message passing
+
 Messages can be passed from one process(caller) to another(receiver) using send/2. Sending a message amounts to storing it in the receiver's mailbox. The 
 receiver consumes messages in the order received, and a message can be removed 
 from the queue only if it’s consumed.
@@ -49,6 +52,7 @@ iex> receive do
 
 
 ### Receive/0 algorithm
+
 Unlike case/1, receive/0 doesn't raise an error if no pattern matches. Instead, it waits for a message to arrive and tries to match it against the patterns. If no pattern matches, it waits for another message. This process continues until a pattern matches or the timeout is reached (if specified).
 
 In short, it looks like this:
@@ -60,3 +64,12 @@ In short, it looks like this:
 - If the after clause is specified and no message is matched in the given amount of time, run the code from the after block.
 
 The result of receive is the result of the last expression in the matched clause.
+
+
+## Stateful server processes
+
+### Server processes
+A server process is an informal name for a process that runs for a long time (or forever) and can handle various requests (messages).
+
+### Server processes are sequential
+Server processes are sequential because they run one loop at a time. But if queries coming to the server can be run sequentially, it's better to create a pool of server processes and then choose one of the processes from the pool for each query. A list/map can be used as the pool of processes
