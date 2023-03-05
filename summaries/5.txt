@@ -73,3 +73,9 @@ A server process is an informal name for a process that runs for a long time (or
 
 ### Server processes are sequential
 Server processes are sequential because they run one loop at a time. But if queries coming to the server can be run sequentially, it's better to create a pool of server processes and then choose one of the processes from the pool for each query. A list/map can be used as the pool of processes
+
+### Keeping a process state
+
+!!!!! NOTE: Learn what TCP communication is
+
+When Keeping state, you make sure that the function that listens to messages is able to receive the initial state as argument.
