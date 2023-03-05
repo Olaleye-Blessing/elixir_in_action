@@ -4,42 +4,24 @@ defmodule Calculator do
   def loop(current_value) do
     new_value =
       receive do
-        {:value, caller} ->
-          send(caller, {:response, current_value})
-          # below needs to be returned. remember receive/0 returns the last computd expression
-          current_value
-
-        {:add, value} ->
-          current_value + value
-
-        {:sub, value} ->
-          current_value - value
-
-        {:mul, value} ->
-          current_value * value
-
-        {:div, value} ->
-          current_value / value
-
-        invalid_request ->
-          IO.puts("Invalid request #{inspect(invalid_request)}")
-          current_value
+        message -> process_message(current_value, message)
       end
 
     loop(new_value)
   end
 
-  def value(server_pid) do
-    send(server_pid, {:value, self()})
-
-    receive do
-      {:response, value} ->
-        value
-    end
+  def process_message(current_value, {:value, caller}) do
+    send(caller, {:response, current_value})
+    current_value
   end
 
-  def add(server_pid, value), do: send(server_pid, {:add, value})
-  def sub(server_pid, value), do: send(server_pid, {:sub, value})
-  def mul(server_pid, value), do: send(server_pid, {:mul, value})
-  def div(server_pid, value), do: send(server_pid, {:div, value})
+  def process_message(current_value, {:add, value}), do: current_value + value
+  def process_message(current_value, {:sub, value}), do: current_value - value
+  def process_message(current_value, {:mul, value}), do: current_value * value
+  def process_message(current_value, {:div, value}), do: current_value / value
+
+  def process_message(current_value, invalid_request) do
+    IO.puts("Invalid request #{inspect(invalid_request)}")
+    current_value
+  end
 end
