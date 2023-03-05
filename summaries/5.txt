@@ -1,0 +1,10 @@
+# Concurrency Primitives
+
+## Concurrency in BEAM
+
+In Beam, the unit of concurrency is a process.
+
+!!! Note: check the difference between BEAM process and OS process.
+
+- Process helps to run things in parallel(scalability)
+- Process ensures isolation(faulty tolerance)
