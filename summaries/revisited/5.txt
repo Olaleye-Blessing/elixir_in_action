@@ -2,4 +2,25 @@
 - In BEAM, a process has to be created to run something concurrently.
 
 ## Creating processes
+- Use spawn/1 to create a process
 - The order of process isn't guaranteed
+
+## Message passing
+- Use send/2 to send a message, e.g send(pid, {:my, :message})
+- Receiver consumes messages in the order received
+- Message can be removed from the queue only if it's consumed
+
+- Use receive/0 to listen to messages
+- receive/0 will always wait for new messages to come in
+- after/0 is used to timeout a receive block
++ Example:
+```
+receive do
+  message -> IO.inspect(message)
+after
+  5000 -> IO.puts("This receive block will timeout if no message is received after 5 seconds")
+end
+```
+
+- receive/0 is a blocking code. This means every code after the receive block won't run because receive/0 will continue to listen to messages. 
+- If the after/0 clause is specified and no message is matched in the given amount of time, run the code from the after/0 block.
