@@ -1,0 +1,5 @@
+# Working with processes
+- In BEAM, a process has to be created to run something concurrently.
+
+## Creating processes
+- The order of process isn't guaranteed
