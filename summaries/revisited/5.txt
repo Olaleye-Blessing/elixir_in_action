@@ -63,3 +63,44 @@ Process.register(self(), :some_name)
   - A single process can have only one name
   - Two processes can't have the same name
  An error will be raised if any of the above rules is violated.
+
+## Runtime considerations
+
+### A process is sequential
+- A single process is always sequential, i.e it process one message at a time.
+  If many processes send messages to a single process, that single process can
+  significantly affect overall performace.
+- One of the ways to handle this is to make sure the single process handle messages
+  as fast as they can.
+- Another way is to split the single process into multiple process(This should be
+  the last resort tho).
+
+### Unlimited process mailboxes
+- Too many messages in the mailbox may cause a slow response. Remeber the server has
+  to go through the messages one by one while responding to messages. Problems happen
+  when the messages arrive faster than the process can handle them. The single slow
+  process may cause an entire system to crash by consuming all the available memory.
+- Too many messages can be in the mailbox when the process doesn't handle unknow messages.
+  It's recommemded to have a match-all receive clause that deals with these kinds of messages
+```
+receive
+  {:message, msg} -> do_something(msg)
+  other -> log_unknown_message(other) 
+end
+```
+
+### Shared-nothing concurrency
+  - Sending a message to another process results in a deep copy of the message contents
+  ```
+  send(pid, message)
+  ```
+  - Deep-copying is an in-memory operation, so it should be reasonably fast and
+    sending a big message shouldn't present a problem.
+  - Problem might arise when many processes frequently sends big messages
+  - Sharing nothing concurrency helps
+    - to simplify the code for each process. A complicated synchronization
+      mechanism won't be needed since processes don't share memory.
+    - in overall stability. One process can't compromise another process.
+
+### Scheduler inner workings
+(Read this again)
