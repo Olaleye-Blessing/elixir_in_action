@@ -51,3 +51,15 @@ end
   Enum.map(1..5, fn _ -> DatabaseServer.get_result() end)
   # ["5 result", "3 result", "1 result", "4 result", "2 result"]
   ```
+
+## Registered processes
+- Use Process.register/2 to give a process a local name
+```
+# :some_name must be an atom
+Process.register(self(), :some_name)
+```
+ - Rules for registering processes:
+  - The name can only be an atom
+  - A single process can have only one name
+  - Two processes can't have the same name
+ An error will be raised if any of the above rules is violated.
