@@ -24,3 +24,30 @@ end
 
 - receive/0 is a blocking code. This means every code after the receive block won't run because receive/0 will continue to listen to messages. 
 - If the after/0 clause is specified and no message is matched in the given amount of time, run the code from the after/0 block.
+
+## Server processes are sequential
+- Server process is internally sequential, the query run one after the other.
+  This might be a problem if we want the server process to run sequentially.
+- Assuming the queries can be run independently, then a pool of server processes
+  can be created, and then for each query somehow choose one of the processes
+  from the pool and have that process run the query. If the pool is large enough
+  and you divide the work uniformly across each worker in the pool,
+  you’ll parallelize the total work as much as possible.
+- E.g
+  ```
+  # create 100 pools
+  pools = Enum.map(1..100, fn _ -> DatabaseServer.start() end)
+
+  # select a random process
+  Enum.each(
+    1...5,
+    fn query_def ->
+      server_pid = Enum.at(pools, :rand.uniform(100) - 1)
+      DatabaseServer.run_async(server_pid, query_def)
+    end
+  )
+
+  # collect response
+  Enum.map(1..5, fn _ -> DatabaseServer.get_result() end)
+  # ["5 result", "3 result", "1 result", "4 result", "2 result"]
+  ```
