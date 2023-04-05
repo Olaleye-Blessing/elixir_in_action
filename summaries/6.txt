@@ -13,3 +13,8 @@
 - There should be a generic code that drives the entire process.
 - The generic code will accept a module as argument(callback module). This module is the implementation code.
 - This module will define a set of functions that can be invoked by the generic code.
+
+### Supporting asynchronous requests
+- This is the naming convention used in OTP(Open Telecom Platform):
+  - call for synchronous requests
+  - cast for asynchronous requests
