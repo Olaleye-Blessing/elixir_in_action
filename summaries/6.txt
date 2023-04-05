@@ -1,0 +1,15 @@
+# Generic Server Processes
+
+
+## Building a generic server process
+- All code that implements a server process needs to do the following:
+  - Spawn a separate process
+  -	Run an infinite loop in the process
+  -	Maintain the process state
+  -	React to messages
+  -	Send a response back to the caller
+
+### Plugging in with modules
+- There should be a generic code that drives the entire process.
+- The generic code will accept a module as argument(callback module). This module is the implementation code.
+- This module will define a set of functions that can be invoked by the generic code.
