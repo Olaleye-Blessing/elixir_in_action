@@ -33,6 +33,14 @@ defmodule ServerProcess do
 end
 
 defmodule KeyValueStore do
+  # interface functions that run in client processes
+  def start(), do: ServerProcess.start(KeyValueStore)
+
+  def put(pid, key, value), do: ServerProcess.call(pid, {:put, key, value})
+
+  def get(pid, key), do: ServerProcess.call(pid, {:get, key})
+
+  # callback functions that are invoked in the server process
   def init(), do: %{}
 
   def handle_call({:put, key, value}, state) do
